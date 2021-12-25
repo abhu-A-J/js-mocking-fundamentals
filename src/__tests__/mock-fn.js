@@ -14,20 +14,35 @@
  * Execute: Use `npx jest --watch src/__tests__/mock-fn.js` to watch the test
  */
 
-const thumbWar = require('../thumb-war')
-const utils = require('../utils')
+const thumbWar = require('../thumb-war');
+const utils = require('../utils');
 
 test('returns winner', () => {
-  const originalGetWinner = utils.getWinner
-  utils.getWinner = jest.fn((p1, p2) => p1)
+  const originalGetWinner = utils.getWinner;
+  utils.getWinner = jest.fn((p1, p2) => p1);
 
-  const winner = thumbWar('Kent C. Dodds', 'Ken Wheeler')
-  expect(winner).toBe('Kent C. Dodds')
-  // Your code:
+  const winner = thumbWar('AJ', 'Abhushan');
+  expect(winner).toBe('AJ');
+
+  /* My code */
+
+  // check how many times function has been called
+  expect(utils.getWinner).toHaveBeenCalledTimes(2);
+
+  expect(utils.getWinner).toHaveBeenCalledWith('AJ', 'Abhushan');
+
+  expect(utils.getWinner).toHaveBeenNthCalledWith(1, 'AJ', 'Abhushan');
+  expect(utils.getWinner).toHaveBeenNthCalledWith(2, 'AJ', 'Abhushan');
+
+  // or one assertion to complete all of this
+  expect(utils.getWinner.mock.calls).toEqual([
+    ['AJ', 'Abhushan'],
+    ['AJ', 'Abhushan'],
+  ]);
 
   // cleanup
-  utils.getWinner = originalGetWinner
-})
+  utils.getWinner = originalGetWinner;
+});
 
 /**
  * Hints:
