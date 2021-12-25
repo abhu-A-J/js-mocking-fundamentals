@@ -6,24 +6,40 @@
  * Execute: Use `npx jest --watch src/no-framework/mock-fn.js` to watch the test
  */
 
-const assert = require('assert')
-const thumbWar = require('../thumb-war')
-const utils = require('../utils')
+const assert = require('assert');
+const thumbWar = require('../thumb-war');
+const utils = require('../utils');
 
-// Your Code:
+/* Writing a custom mock function */
+function fn(impl) {
+  const mockedFn = (...args) => {
+    mockedFn.mock.calls.push(args);
+    return impl(...args);
+  };
 
-const originalGetWinner = utils.getWinner
-utils.getWinner = fn((p1, p2) => p1)
+  mockedFn.mock = {
+    calls: [],
+  };
 
-const winner = thumbWar('Kent C. Dodds', 'Ken Wheeler')
-assert.strictEqual(winner, 'Kent C. Dodds')
+  return mockedFn;
+}
+
+const originalGetWinner = utils.getWinner;
+utils.getWinner = fn((p1, p2) => p1);
+
+const winner = thumbWar('Kent C. Dodds', 'Ken Wheeler');
+
+assert.strictEqual(winner, 'Kent C. Dodds');
+
 assert.deepStrictEqual(utils.getWinner.mock.calls, [
   ['Kent C. Dodds', 'Ken Wheeler'],
   ['Kent C. Dodds', 'Ken Wheeler'],
-])
+]);
+
+console.log(utils.getWinner.mock.calls);
 
 // cleanup
-utils.getWinner = originalGetWinner
+utils.getWinner = originalGetWinner;
 
 /**
  * Checkout master branch to see the answer.
